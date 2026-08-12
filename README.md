@@ -27,7 +27,7 @@ Different roles call for different resume versions. Maintaining multiple documen
 | `index.html` | Personal offline version (not included — contains real resume data) |
 | `resume-data.js` | Content layer for the offline version (not included — personal data) |
 
-The offline version separates content (`resume-data.js`) from the app (`index.html`), so resume content can be edited without touching application logic. The portfolio version bakes demo data directly into a single file for easy deployment.
+The offline version separates content (`resume-data.js`) from the app (`index.html`), so resume content can be edited without touching application logic. The demo version bakes fictional data directly into a single file for easy deployment.
 
 ## Stack
 
