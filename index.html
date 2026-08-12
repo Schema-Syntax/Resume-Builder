@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Builder — Portfolio Demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F1923;
+      --surface: #162130;
+      --surface2: #1E2E40;
+      --border: #2A3F55;
+      --text: #E8E8E8;
+      --text-muted: #7A8FA0;
+      --accent: #4A9B8E;
+      --accent-dim: rgba(74, 155, 142, 0.15);
+      --tag-da: #5B7FA6;
+      --tag-da-bg: rgba(91, 127, 166, 0.15);
+      --tag-oa: #B8924A;
+      --tag-oa-bg: rgba(184, 146, 74, 0.15);
+      --tag-rr: #7B6BA8;
+      --tag-rr-bg: rgba(123, 107, 168, 0.15);
+      --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 14px;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* INTRO BANNER */
+    .intro {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 28px;
+    }
+
+    .intro-inner {
+      max-width: 900px;
+    }
+
+    .intro-byline {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .intro-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .intro-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 640px;
+    }
+
+    .intro-body strong { color: var(--text); }
+
+    .intro-links {
+      margin-top: 10px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .intro-link {
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s;
+    }
+
+    .intro-link:hover { border-color: var(--accent); }
+
+    .demo-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px;
+      background: rgba(184, 146, 74, 0.15);
+      color: #B8924A;
+      margin-top: 10px;
+    }
+
+    /* APP HEADER */
+    header {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    header h1 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .track-legend {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .legend-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-DA { background: var(--tag-da-bg); color: var(--tag-da); }
+    .tag-OA { background: var(--tag-oa-bg); color: var(--tag-oa); }
+    .tag-RR { background: var(--tag-rr-bg); color: var(--tag-rr); }
+
+    /* WORKSPACE */
+    .workspace {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      flex: 1;
+      min-height: 600px;
+    }
+
+    .controls {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .controls::-webkit-scrollbar { width: 4px; }
+    .controls::-webkit-scrollbar-track { background: transparent; }
+    .controls::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .summary-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .summary-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .summary-option:hover { border-color: var(--accent); }
+    .summary-option.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .summary-option input[type="radio"] { display: none; }
+
+    .summary-option-label { font-size: 13px; font-weight: 500; }
+
+    .role-block {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .role-header {
+      padding: 10px 12px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .role-title { font-size: 12px; font-weight: 600; color: var(--text); }
+    .role-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .bullets-list {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .bullet-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.12s;
+      user-select: none;
+    }
+
+    .bullet-item:hover { background: var(--surface2); }
+    .bullet-item.selected { background: var(--accent-dim); }
+    .bullet-item.hidden { display: none; }
+
+    .bullet-check {
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.12s;
+    }
+
+    .bullet-item.selected .bullet-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .bullet-item.selected .bullet-check::after {
+      content: '✓';
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .bullet-content { flex: 1; min-width: 0; }
+    .bullet-tags { display: flex; gap: 4px; margin-bottom: 3px; }
+
+    .bullet-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .bullet-item.selected .bullet-text { color: var(--text); }
+
+    .drag-handle {
+      color: var(--border);
+      font-size: 12px;
+      cursor: grab;
+      flex-shrink: 0;
+      margin-top: 1px;
+      opacity: 0;
+      transition: opacity 0.12s;
+    }
+
+    .bullet-item.selected .drag-handle { opacity: 1; }
+    .bullet-item.selected:hover .drag-handle { color: var(--text-muted); }
+    .bullet-item.dragging { opacity: 0.4; }
+    .bullet-item.drag-over { border-top: 2px solid var(--accent); }
+
+    .additional-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .toggle-switch {
+      width: 32px;
+      height: 18px;
+      background: var(--border);
+      border-radius: 9px;
+      position: relative;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch.on { background: var(--accent); }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+
+    .toggle-switch.on::after { transform: translateX(14px); }
+    .toggle-label { font-size: 12px; color: var(--text-muted); }
+
+    /* SEARCH */
+    .search-wrap { position: relative; }
+
+    .search-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 8px 10px 8px 30px;
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .search-icon {
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      display: none;
+    }
+
+    .search-clear.visible { display: block; }
+    .search-clear:hover { color: var(--text); }
+
+    mark {
+      background: rgba(74, 155, 142, 0.35);
+      color: var(--text);
+      border-radius: 2px;
+      padding: 0 1px;
+    }
+
+    /* OUTPUT */
+    .output-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .output-toolbar {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .output-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .copy-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .copy-btn:hover { opacity: 0.85; }
+    .copy-btn.copied { background: #4A8E6E; }
+
+    .output-text {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      background: var(--bg);
+      min-height: 500px;
+    }
+
+    .output-text::-webkit-scrollbar { width: 4px; }
+    .output-text::-webkit-scrollbar-track { background: transparent; }
+    .output-text::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* FOOTER */
+    footer {
+      padding: 14px 28px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="intro">
+  <div class="intro-inner">
+    <div class="intro-byline">Portfolio Project</div>
+    <div class="intro-title">Resume Builder</div>
+    <div class="intro-body">
+      Different roles call for different resume versions. Rather than maintaining multiple documents or making error-prone edits under pressure,
+      I built this tool to make resume customization <strong>fast, deliberate, and repeatable.</strong>
+      Select a summary track, check the bullets that fit the role, reorder by priority, and copy the output directly into your document editor.
+    </div>
+    <div class="demo-badge">⚠ Demo — fictional data below</div>
+    <div class="intro-links">
+      <a class="intro-link" href="https://github.com/Schema-Syntax/Resume-Builder" target="_blank">GitHub →</a>
+      <a class="intro-link" href="https://home.schema-syntax.workers.dev/" target="_blank">Portfolio →</a>
+    </div>
+  </div>
+</div>
+
+<!-- APP HEADER -->
+<header>
+  <h1>Resume Builder — Interactive Demo</h1>
+  <div class="track-legend">
+    <span class="legend-label">Tracks:</span>
+    <span class="tag tag-DA">DA</span>
+    <span class="tag tag-OA">OA</span>
+    <span class="tag tag-RR">RR</span>
+  </div>
+</header>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+  <div class="controls" id="controls">
+    <div>
+      <div class="section-label">Search Bullets</div>
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input class="search-input" id="searchInput" type="text"
+          placeholder="Filter by keyword..."
+          oninput="handleSearch(this.value)">
+        <span class="search-clear" id="searchClear" onclick="clearSearch()">✕</span>
+      </div>
+    </div>
+  </div>
+  <div class="output-panel">
+    <div class="output-toolbar">
+      <span class="output-label">Output — Ready to Copy</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyOutput()">Copy</button>
+    </div>
+    <div class="output-text" id="outputText"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>Built by <a href="https://github.com/yourusername" target="_blank">yourusername</a> — view source on GitHub</span>
+  <span>Demo data is entirely fictional.</span>
+</footer>
+
+<script>
+  // ─── DEMO DATA ───────────────────────────────────────────────────────────────
+
+  const resumeData = {
+    header: {
+      name: "Morgan Ellis",
+      location: "Metro City, ST",
+      phone: "555-000-1234",
+      email: "morgan.ellis@email.com",
+      linkedin: "linkedin.com/in/morganellis"
+    },
+
+    summaries: [
+      {
+        id: "da",
+        label: "Data Analyst",
+        text: "Public Health Data Analyst with 8+ years of experience translating complex epidemiological and program data into clear, actionable insights for clinical and operational teams. Skilled in dashboard development, data quality assurance, and stakeholder reporting across SQL, Power BI, and Python. Known for making data accessible and meaningful to both technical and non-technical audiences."
+      },
+      {
+        id: "oa",
+        label: "Operations / Program Analyst",
+        text: "Operations Analyst with 8+ years of experience supporting program delivery, process improvement, and cross-functional coordination in public health settings. Combines systems thinking with practical problem solving to streamline workflows, improve data integrity, and ensure reporting accuracy across complex multi-stakeholder environments."
+      },
+      {
+        id: "rr",
+        label: "Research & Reporting Analyst",
+        text: "Research and Reporting Analyst with 8+ years of experience designing and maintaining data systems that support grant compliance, program evaluation, and community health monitoring. Skilled at translating program outcomes into compelling reports for funders, leadership, and community partners."
+      }
+    ],
+
+    skills: {
+      tools: ["Power BI", "Tableau", "REDCap", "Salesforce", "SharePoint Online", "ArcGIS", "Jira"],
+      technical: ["SQL", "Python", "R (basic)", "Data Modeling", "ETL", "Data Visualization", "Dashboard Development", "Data Governance", "Data Quality"],
+      competencies: ["Systems Thinking", "Stakeholder Collaboration", "Requirements Gathering", "Process Improvement", "Technical Documentation", "Grant Reporting", "Community Health Metrics", "UAT", "Training & Change Management"],
+      other: ["HIPAA Compliance", "IRB Protocol Familiarity", "Trauma-Informed Data Practices"]
+    },
+
+    experience: [
+      {
+        id: "state-health",
+        title: "Senior Public Health Data Analyst",
+        company: "State Department of Public Health",
+        location: "Remote / Hybrid",
+        dates: "06/2019 – Present",
+        bullets: [
+          {
+            id: "sh-1",
+            tracks: ["DA"],
+            text: "Designed and maintained Power BI dashboards tracking disease surveillance KPIs across 12 county health departments, enabling real-time monitoring of communicable disease trends by regional leadership."
+          },
+          {
+            id: "sh-2",
+            tracks: ["DA", "RR"],
+            text: "Built automated reporting pipelines in SQL and Python to replace manual weekly data pulls, reducing report preparation time by approximately 60% and eliminating a recurring class of data entry errors."
+          },
+          {
+            id: "sh-3",
+            tracks: ["OA"],
+            text: "Led cross-functional working group to standardize case reporting definitions across county and state systems, resolving long-standing inconsistencies that had affected multi-year trend analysis."
+          },
+          {
+            id: "sh-4",
+            tracks: ["DA", "OA"],
+            text: "Implemented row-level security in Power BI to ensure county-level staff accessed only their jurisdiction's data while state-level leadership retained full visibility across all regions."
+          },
+          {
+            id: "sh-5",
+            tracks: ["RR"],
+            text: "Produced quarterly and annual program performance reports for federal grant compliance, synthesizing data from three separate systems into a single integrated narrative for CDC submission."
+          },
+          {
+            id: "sh-6",
+            tracks: ["OA"],
+            text: "Conducted data quality audits across the state immunization registry, identifying and resolving over 4,000 duplicate and incomplete records in coordination with county data coordinators."
+          },
+          {
+            id: "sh-7",
+            tracks: ["OA", "DA"],
+            text: "Served as cross-functional SME for a statewide EHR integration project, translating clinical data requirements into technical specifications and supporting UAT across four pilot sites."
+          }
+        ]
+      },
+      {
+        id: "nonprofit-health",
+        title: "Epidemiology Data Coordinator",
+        company: "Community Health Alliance (Nonprofit)",
+        location: "On-site",
+        dates: "03/2015 – 06/2019",
+        bullets: [
+          {
+            id: "nh-1",
+            tracks: ["DA"],
+            text: "Developed Tableau dashboards for program leadership tracking community health metrics including vaccination rates, chronic disease prevalence, and screening participation by zip code."
+          },
+          {
+            id: "nh-2",
+            tracks: ["OA"],
+            text: "Administered REDCap database for three community health programs, managing user access, survey logic, and data exports while training 20+ clinical and outreach staff on data entry standards."
+          },
+          {
+            id: "nh-3",
+            tracks: ["RR"],
+            text: "Supported grant reporting for six active federal and foundation grants, ensuring timely submission of data deliverables and coordinating with program managers to validate outcome measures."
+          },
+          {
+            id: "nh-4",
+            tracks: ["OA", "RR"],
+            text: "Designed and maintained standard operating procedures for data collection, storage, and reporting across all programs, reducing onboarding time for new data staff by approximately 40%."
+          },
+          {
+            id: "nh-5",
+            tracks: ["DA", "OA"],
+            text: "Self-initiated development of a community needs assessment tracking tool in SharePoint, consolidating data previously managed across four disconnected spreadsheets into a single auditable system."
+          },
+          {
+            id: "nh-6",
+            tracks: ["RR"],
+            text: "Produced annual community health needs assessment reports in partnership with county partners, presenting findings to board, funders, and community stakeholders."
+          }
+        ]
+      }
+    ],
+
+    education: [
+      {
+        id: "degree",
+        always: true,
+        text: "Master of Public Health (MPH), Epidemiology — State University, 2015"
+      },
+      {
+        id: "undergrad",
+        always: true,
+        text: "Bachelor of Science, Biology — Liberal Arts College, 2012"
+      },
+      {
+        id: "lss",
+        always: false,
+        text: "Lean Six Sigma Green Belt — Six Sigma Academy"
+      },
+      {
+        id: "tableau",
+        always: false,
+        text: "Tableau Desktop Specialist Certification — 2021"
+      }
+    ],
+
+    additional: {
+      text: "Earlier experience includes community health outreach coordination and program assistant roles supporting maternal and child health initiatives."
+    }
+  };
+
+  // ─── STATE ───────────────────────────────────────────────────────────────────
+
+  const state = {
+    selectedSummary: 'da',
+    selectedBullets: {},
+    bulletOrder: {},
+    showAdditional: false,
+    searchQuery: '',
+    selectedEducation: new Set()
+  };
+
+  resumeData.experience.forEach(role => {
+    state.selectedBullets[role.id] = new Set();
+    state.bulletOrder[role.id] = role.bullets.map(b => b.id);
+  });
+
+  resumeData.education.forEach(e => {
+    if (e.always) state.selectedEducation.add(e.id);
+  });
+
+  // ─── DRAG ────────────────────────────────────────────────────────────────────
+
+  let dragSrc = null;
+  let dragRoleId = null;
+
+  // ─── SEARCH ──────────────────────────────────────────────────────────────────
+
+  let searchDebounce = null;
+
+  function handleSearch(value) {
+    state.searchQuery = value.toLowerCase().trim();
+    document.getElementById('searchClear').classList.toggle('visible', value.length > 0);
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => applySearch(), 300);
+  }
+
+  function clearSearch() {
+    state.searchQuery = '';
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchClear').classList.remove('visible');
+    applySearch();
+  }
+
+  function highlightText(text, query) {
+    if (!query || query.length < 3) return text;
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp(escaped, 'gi'), match => `<mark>${match}</mark>`);
+  }
+
+  function applySearch() {
+    document.querySelectorAll('.bullet-item[data-bullet-id]').forEach(item => {
+      const bulletId = item.dataset.bulletId;
+      const roleId = item.dataset.roleId;
+      const role = resumeData.experience.find(r => r.id === roleId);
+      if (!role) return;
+      const bullet = role.bullets.find(b => b.id === bulletId);
+      if (!bullet) return;
+
+      const matches = !state.searchQuery ||
+        bullet.text.toLowerCase().includes(state.searchQuery) ||
+        bullet.tracks.some(t => t.toLowerCase().includes(state.searchQuery));
+
+      item.classList.toggle('hidden', !matches);
+
+      const textEl = item.querySelector('.bullet-text');
+      if (textEl) textEl.innerHTML = highlightText(bullet.text, state.searchQuery);
+    });
+  }
+
+  // ─── BUILD CONTROLS ──────────────────────────────────────────────────────────
+
+  function buildControls() {
+    const container = document.getElementById('controls');
+    const children = Array.from(container.children);
+    children.slice(1).forEach(el => el.remove());
+
+    // Summary
+    const summarySection = document.createElement('div');
+    summarySection.innerHTML = `<div class="section-label">Professional Summary</div>`;
+    const summaryOptions = document.createElement('div');
+    summaryOptions.className = 'summary-options';
+
+    resumeData.summaries.forEach(s => {
+      const opt = document.createElement('label');
+      opt.className = 'summary-option' + (state.selectedSummary === s.id ? ' selected' : '');
+      opt.innerHTML = `
+        <input type="radio" name="summary" value="${s.id}" ${state.selectedSummary === s.id ? 'checked' : ''}>
+        <span class="summary-option-label">${s.label}</span>
+      `;
+      opt.addEventListener('click', () => {
+        state.selectedSummary = s.id;
+        buildControls();
+        buildOutput();
+      });
+      summaryOptions.appendChild(opt);
+    });
+
+    summarySection.appendChild(summaryOptions);
+    container.appendChild(summarySection);
+
+    // Experience
+    resumeData.experience.forEach(role => {
+      const roleSection = document.createElement('div');
+      roleSection.innerHTML = `<div class="section-label">Experience</div>`;
+
+      const roleBlock = document.createElement('div');
+      roleBlock.className = 'role-block';
+      roleBlock.innerHTML = `
+        <div class="role-header">
+          <div class="role-title">${role.title}</div>
+          <div class="role-meta">${role.company} · ${role.dates}</div>
+        </div>
+      `;
+
+      const bulletsList = document.createElement('div');
+      bulletsList.className = 'bullets-list';
+
+      state.bulletOrder[role.id].forEach(bulletId => {
+        const bullet = role.bullets.find(b => b.id === bulletId);
+        if (!bullet) return;
+
+        const isSelected = state.selectedBullets[role.id].has(bullet.id);
+        const item = document.createElement('div');
+        item.className = 'bullet-item' + (isSelected ? ' selected' : '');
+        item.dataset.bulletId = bullet.id;
+        item.dataset.roleId = role.id;
+        item.draggable = isSelected;
+
+        const tagsHtml = bullet.tracks.map(t =>
+          `<span class="tag tag-${t}">${t}</span>`
+        ).join('');
+
+        item.innerHTML = `
+          <div class="bullet-check"></div>
+          <div class="bullet-content">
+            <div class="bullet-tags">${tagsHtml}</div>
+            <div class="bullet-text">${bullet.text}</div>
+          </div>
+          <div class="drag-handle" title="Drag to reorder">⠿</div>
+        `;
+
+        item.addEventListener('click', e => {
+          if (e.target.closest('.drag-handle')) return;
+          if (state.selectedBullets[role.id].has(bullet.id)) {
+            state.selectedBullets[role.id].delete(bullet.id);
+          } else {
+            state.selectedBullets[role.id].add(bullet.id);
+          }
+          buildControls();
+          buildOutput();
+        });
+
+        item.addEventListener('dragstart', e => {
+          if (!isSelected) { e.preventDefault(); return; }
+          dragSrc = bullet.id;
+          dragRoleId = role.id;
+          item.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          document.querySelectorAll('.bullet-item').forEach(el => el.classList.remove('drag-over'));
+        });
+
+        item.addEventListener('dragover', e => {
+          if (dragRoleId !== role.id) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          document.querySelectorAll(`[data-role-id="${role.id}"]`).forEach(el => el.classList.remove('drag-over'));
+          item.classList.add('drag-over');
+        });
+
+        item.addEventListener('drop', e => {
+          e.preventDefault();
+          if (dragSrc === bullet.id || dragRoleId !== role.id) return;
+          const order = state.bulletOrder[role.id];
+          const fromIdx = order.indexOf(dragSrc);
+          const toIdx = order.indexOf(bullet.id);
+          order.splice(fromIdx, 1);
+          order.splice(toIdx, 0, dragSrc);
+          buildControls();
+          buildOutput();
+        });
+
+        bulletsList.appendChild(item);
+      });
+
+      roleBlock.appendChild(bulletsList);
+      roleSection.appendChild(roleBlock);
+      container.appendChild(roleSection);
+    });
+
+    // Education
+    const eduSection = document.createElement('div');
+    eduSection.innerHTML = `<div class="section-label">Education & Certifications</div>`;
+    const eduBlock = document.createElement('div');
+    eduBlock.className = 'role-block';
+    const eduList = document.createElement('div');
+    eduList.className = 'bullets-list';
+
+    resumeData.education.forEach(entry => {
+      const isSelected = state.selectedEducation.has(entry.id);
+      const item = document.createElement('div');
+      item.className = 'bullet-item' + (isSelected ? ' selected' : '');
+      item.dataset.eduId = entry.id;
+
+      item.innerHTML = `
+        <div class="bullet-check"></div>
+        <div class="bullet-content">
+          ${entry.always ? `<div class="bullet-tags"><span class="tag" style="background:rgba(74,155,142,0.15);color:var(--accent)">ALWAYS</span></div>` : ''}
+          <div class="bullet-text">${entry.text}</div>
+        </div>
+      `;
+
+      item.addEventListener('click', () => {
+        if (state.selectedEducation.has(entry.id)) {
+          state.selectedEducation.delete(entry.id);
+        } else {
+          state.selectedEducation.add(entry.id);
+        }
+        buildControls();
+        buildOutput();
+      });
+
+      eduList.appendChild(item);
+    });
+
+    eduBlock.appendChild(eduList);
+    eduSection.appendChild(eduBlock);
+    container.appendChild(eduSection);
+
+    // Additional toggle
+    const additionalSection = document.createElement('div');
+    additionalSection.innerHTML = `<div class="section-label">Additional Experience</div>`;
+    const toggle = document.createElement('div');
+    toggle.className = 'additional-toggle';
+    toggle.innerHTML = `
+      <div class="toggle-switch ${state.showAdditional ? 'on' : ''}"></div>
+      <span class="toggle-label">Include "Additional Experience" section</span>
+    `;
+    toggle.addEventListener('click', () => {
+      state.showAdditional = !state.showAdditional;
+      buildControls();
+      buildOutput();
+    });
+    additionalSection.appendChild(toggle);
+    container.appendChild(additionalSection);
+
+    applySearch();
+  }
+
+  // ─── BUILD OUTPUT ─────────────────────────────────────────────────────────────
+
+  function buildOutput() {
+    const out = document.getElementById('outputText');
+    const d = resumeData;
+    const lines = [];
+
+    lines.push(d.header.name);
+    lines.push(`${d.header.location}  ·  ${d.header.phone}  ·  ${d.header.email}  ·  ${d.header.linkedin}`);
+    lines.push('');
+
+    const summary = d.summaries.find(s => s.id === state.selectedSummary);
+    if (summary) {
+      lines.push('PROFESSIONAL SUMMARY');
+      lines.push('─'.repeat(60));
+      lines.push(summary.text);
+      lines.push('');
+    }
+
+    lines.push('SKILLS');
+    lines.push('─'.repeat(60));
+    lines.push(`Tools & Platforms: ${d.skills.tools.join(', ')}`);
+    lines.push(`Technical Skills: ${d.skills.technical.join(', ')}`);
+    lines.push(`Competencies: ${d.skills.competencies.join(', ')}`);
+    lines.push(`Other: ${d.skills.other.join(', ')}`);
+    lines.push('');
+
+    const selectedEdu = d.education.filter(e => state.selectedEducation.has(e.id));
+    if (selectedEdu.length > 0) {
+      lines.push('EDUCATION & CERTIFICATIONS');
+      lines.push('─'.repeat(60));
+      selectedEdu.forEach(e => lines.push(`  •  ${e.text}`));
+      lines.push('');
+    }
+
+    lines.push('PROFESSIONAL EXPERIENCE');
+    lines.push('─'.repeat(60));
+
+    d.experience.forEach(role => {
+      const selected = state.bulletOrder[role.id].filter(id =>
+        state.selectedBullets[role.id].has(id)
+      );
+
+      lines.push(role.title);
+      lines.push(`${role.company}  ·  ${role.location}  ·  ${role.dates}`);
+
+      if (selected.length === 0) {
+        lines.push('  [No bullets selected]');
+      } else {
+        selected.forEach(bulletId => {
+          const bullet = role.bullets.find(b => b.id === bulletId);
+          if (bullet) lines.push(`  •  ${bullet.text}`);
+        });
+      }
+      lines.push('');
+    });
+
+    if (state.showAdditional) {
+      lines.push('ADDITIONAL EXPERIENCE');
+      lines.push('─'.repeat(60));
+      lines.push(d.additional.text);
+      lines.push('');
+    }
+
+    out.textContent = lines.join('\n');
+  }
+
+  function copyOutput() {
+    const text = document.getElementById('outputText').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  // ─── INIT ────────────────────────────────────────────────────────────────────
+
+  buildControls();
+  buildOutput();
+  applySearch();
+</script>
+</body>
+</html>
